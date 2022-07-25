@@ -145,6 +145,39 @@ dmypy.json
 
 .mypy_cache
 
-# папки со статикой и медиа
-media/
+### Ignoring MacOSX files
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+# Icon must end with two \r
+Icon
+# Thumbnails
+._*
+
+### Ignoring all vim's
+# Swap files
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+# Session file
+Session.vim
+# Temporary files
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
+
+### Ignoring project files
+# static css files
+**/css/
+**/static/
 yatube_api/posts/static/
+media/
+# email emulation files
+**/sent_emails/
