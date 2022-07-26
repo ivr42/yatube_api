@@ -8,6 +8,7 @@ app_name = "api.v1"
 v1_router = DefaultRouter()
 v1_router.register("posts", views.PostViewSet, basename="api_posts")
 v1_router.register("groups", views.GroupViewSet, basename="api_groups")
+v1_router.register("follow", views.FollowViewSet, basename="api_follow")
 v1_router.register(
     r"posts/(?P<post_id>\d+)/comments",
     views.CommentViewSet,

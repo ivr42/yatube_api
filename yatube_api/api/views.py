@@ -1,9 +1,17 @@
-from posts.models import Comment, Group, Post
-from rest_framework import viewsets
+from posts.models import Comment, Follow, Group, Post, User
+from rest_framework import filters, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
 
-from .serializers import CommentSerializer, GroupSerializer, PostSerializer
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (
+    CommentSerializer,
+    FollowSerializer,
+    GroupSerializer,
+    PostSerializer,
+)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,3 +40,29 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class FollowViewSet(viewsets.ModelViewSet):
+    serializer_class = FollowSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ["following__username"]
+
+    def get_queryset(self, *args, **kwargs):
+        return Follow.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        following = get_object_or_404(
+            User, username=self.request.data.get("following")
+        )
+        if following == self.request.user:
+            raise ValidationError(
+                {"detail": "Пользователь не может быть подписан сам на себя"}
+            )
+        if Follow.objects.filter(
+            following=following,
+            user=self.request.user,
+        ).exists():
+            raise ValidationError({"detail": "Такая подписка уже существует"})
+
+        serializer.save(user=self.request.user)
