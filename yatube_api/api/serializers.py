@@ -1,10 +1,11 @@
 from posts.models import Comment, Follow, Group, Post, User
-from rest_framework import serializers
-from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
+from rest_framework import relations, serializers, validators
+
+from .validators import AllDifferentValidator
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field="username", read_only=True)
+    author = relations.SlugRelatedField(slug_field="username", read_only=True)
 
     class Meta:
         fields = "__all__"
@@ -12,10 +13,10 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(
+    author = relations.SlugRelatedField(
         required=False, read_only=True, slug_field="username"
     )
-    post = PrimaryKeyRelatedField(many=False, read_only=True)
+    post = relations.PrimaryKeyRelatedField(many=False, read_only=True)
 
     class Meta:
         fields = "__all__"
@@ -29,13 +30,27 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = SlugRelatedField(
-        required=False, read_only=True, slug_field="username"
+    user = relations.SlugRelatedField(
+        required=False,
+        read_only=True,
+        slug_field="username",
+        default=serializers.CurrentUserDefault(),
     )
-    following = SlugRelatedField(
+    following = relations.SlugRelatedField(
         slug_field="username", queryset=User.objects.all()
     )
 
     class Meta:
         model = Follow
         fields = ("user", "following")
+        validators = [
+            validators.UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=("user", "following"),
+                message="Такая подписка уже существует",
+            ),
+            AllDifferentValidator(
+                fields=("user", "following"),
+                message="Пользователь не может быть подписан сам на себя",
+            ),
+        ]
