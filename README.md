@@ -1,6 +1,16 @@
-# Yatube
+# Yatube API
 
-Yatube — концепт социальной сети.
+REST API для проекта [Yatube](https://github.com/ivr42/yatube)
+
+(Yatube — концепт социальной сети для публикации дневников.)
+
+## Стек технологий, использованных в проекте
+- Python 3.7
+- Django 2.2
+- Django REST Framework (DRF)
+- SimpleJWT
+- SQLite
+
 
 ## Как установить проект:
 1. Клонировать репозиторий и перейти в него в командной строке:
