@@ -15,10 +15,10 @@ REST API для проекта [Yatube](https://github.com/ivr42/yatube)
 ## Как установить проект:
 1. Клонировать репозиторий и перейти в него в командной строке:
 ```shell
-git clone https://github.com/ivr42/api_final_yatube
+git clone https://github.com/ivr42/yatube_api
 ```
 ```shell
-cd api_final_yatube
+cd yatube_api
 ```
 
 2. Cоздать и активировать виртуальное окружение:
